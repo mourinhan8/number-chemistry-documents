@@ -8,6 +8,7 @@ import {
 } from "react"
 import { useAuth } from "react-oidc-context"
 import { useNavigate } from "react-router-dom"
+import { Routes as Paths } from "@/shared/paths"
 
 type AuthProviderProps = PropsWithChildren
 
@@ -45,6 +46,17 @@ const initialAuthState: AuthState = {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [state, dispatch] = useReducer(reducer, initialAuthState)
+  const auth = useAuth()
+  const navigate = useNavigate()
+
+  console.log(auth)
+
+  useEffect(() => {
+    if (!auth.isAuthenticated) {
+      navigate(Paths.login, { replace: true })
+    }
+  }, [auth.isAuthenticated])
+
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
       {children}
@@ -81,9 +93,9 @@ export const useAppAuth = () => {
     }
   }, [isAuthenticated])
 
-  const handleSignIn = () => {
-    signinPopup()
-    navigate(import.meta.env.VITE_OIDC_REDIRECT_PATH)
+  const handleSignIn = async () => {
+    await signinPopup()
+    navigate(`/${import.meta.env.VITE_OIDC_REDIRECT_PATH}`)
   }
 
   const handleLogout = async () => {

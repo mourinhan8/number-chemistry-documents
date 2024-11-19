@@ -1,52 +1,13 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  RouteObject,
-  RouterProvider,
-  useRoutes,
-} from "react-router-dom"
-import { Basic } from "@/layouts/public"
-import DocumentViewer from "@/components/DocumentViewer"
-import CallbackAuth from "@/pages/auth/callback"
-import AuthUserResolver from "@/routes/resolvers/authUserResolver"
-import Welcome from "@/pages/welcome"
-
-const privateRoutesConfig: RouteObject[] = [
-  {
-    path: "/home",
-    element: (
-      <AuthUserResolver>
-        <Basic />
-      </AuthUserResolver>
-    ),
-    children: [
-      {
-        path: ".",
-        element: <div>Home</div>,
-      },
-      {
-        path: ":id",
-        element: <DocumentViewer />,
-      },
-    ],
-  },
-]
-
-const publicRoutesConfig: RouteObject[] = [
-  {
-    path: "/",
-    element: <Welcome />,
-  },
-  {
-    path: "/api/auth/callback/identity-server4",
-    element: <CallbackAuth />,
-  },
-]
+import React from "react"
+import { RouteObject, useRoutes } from "react-router-dom"
+import privateRoutesConfig from "@/routes/privateRoutesConfig"
+import publicRoutesConfig from "@/routes/publicRoutesConfig"
+import PageNotFound from "@/pages/404page"
 
 const errorRoutes = [
   {
     path: "*",
-    element: <div>404</div>,
+    element: <PageNotFound />,
   },
 ]
 

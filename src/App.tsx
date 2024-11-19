@@ -2,8 +2,9 @@ import { FluentProvider, webLightTheme } from "@fluentui/react-components"
 import Content from "@/routes"
 import { BrowserRouter as Router } from "react-router-dom"
 import { AuthProvider as OIDCAuthProvider } from "react-oidc-context"
-import { AuthProvider as AppAuthProvier } from "./context/authContext"
+import { AuthProvider as AppAuthProvider } from "./context/authContext"
 import { WebStorageStateStore } from "oidc-client-ts"
+import { Suspense } from "react"
 
 const oidcConfig = {
   authority: import.meta.env.VITE_OIDC_AUTHORITY,
@@ -14,6 +15,7 @@ const oidcConfig = {
   }`,
   response_type: "code",
   scope: import.meta.env.VITE_OIDC_SCOPE,
+  // Save identify information in local storage
   userStore: new WebStorageStateStore({ store: window.localStorage }),
   // ...
 }
@@ -22,11 +24,13 @@ function App() {
   return (
     <OIDCAuthProvider {...oidcConfig}>
       <Router>
-        <AppAuthProvier>
-          <FluentProvider theme={webLightTheme}>
-            <Content />
-          </FluentProvider>
-        </AppAuthProvier>
+        <Suspense fallback={<div>Loading...</div>}>
+          <AppAuthProvider>
+            <FluentProvider theme={webLightTheme}>
+              <Content />
+            </FluentProvider>
+          </AppAuthProvider>
+        </Suspense>
       </Router>
     </OIDCAuthProvider>
   )
